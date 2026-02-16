@@ -1,5 +1,3 @@
-Here you go bro — **ONE single copy-paste README file**.
-Just create `README.md` and paste everything below. 🚀
 
 ---
 
