@@ -1,6 +1,4 @@
 
----
-
 ````markdown
 # ezml 🚀  
 **Beginner-Friendly AutoML for Tabular Data**
