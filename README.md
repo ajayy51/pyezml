@@ -1,9 +1,13 @@
 
-````markdown
-# ezml 🚀  
+# pyezml 🚀  
 **Beginner-Friendly AutoML for Tabular Data**
 
-ezml is a lightweight, easy-to-use AutoML library that lets anyone train machine learning models in just a few lines of code — no deep ML knowledge required.
+![PyPI version](https://img.shields.io/pypi/v/pyezml)
+![Python](https://img.shields.io/pypi/pyversions/pyezml)
+![License](https://img.shields.io/github/license/ajayy51/pyezml)
+![Downloads](https://img.shields.io/pypi/dm/pyezml)
+
+pyezml is a lightweight AutoML library that lets you train machine learning models in **one line of code** — no ML expertise required.
 
 Built for students, developers, analysts, and beginners who want fast, reliable predictions without complex pipelines.
 
@@ -11,23 +15,21 @@ Built for students, developers, analysts, and beginners who want fast, reliable 
 
 ## ✨ Key Features
 
-- Smart task detection (classification vs regression)  
-- Fast vs Best model modes  
-- Automatic preprocessing (missing values + encoding)  
-- One-line training helper  
-- Dict-based safe prediction  
-- Built-in save & load support  
-- Lightweight and beginner-friendly  
-- Modular and extensible design  
+- 🧠 Smart task detection (classification vs regression)  
+- ⚡ Fast vs Best model modes  
+- 🧹 Automatic preprocessing (missing values + encoding)  
+- 📊 Built-in metrics API  
+- 🔮 Safe dict-based prediction  
+- 💾 Built-in save & load  
+- 🐼 Supports CSV and pandas DataFrame  
+- 🪶 Lightweight and beginner-friendly  
 
 ---
 
-## Installation
-
-Clone the repository and install dependencies:
+## 🚀 Installation
 
 ```bash
-pip install -r requirements.txt
+pip install pyezml
 ````
 
 **Optional (recommended for best mode):**
@@ -36,25 +38,26 @@ pip install -r requirements.txt
 pip install lightgbm
 ```
 
+**Requirements**
+
+- Python ≥ 3.8
+
 ---
 
-## ⚡ Quick Start (Recommended)
-
-### One-line training
+## ⚡ Quick Example
 
 ```python
 from ezml import train_model
 
 model = train_model("data.csv", target="price")
-
-prediction = model.predict([[3000, 3, 2, 5]])
+print(model.predict({"area_sqft": 3000, "bedrooms": 3}))
 ```
+
+That’s it — model trained and ready.
 
 ---
 
 ## 🔧 Advanced Usage
-
-### Using AutoModel directly
 
 ```python
 from ezml import AutoModel
@@ -62,67 +65,65 @@ from ezml import AutoModel
 model = AutoModel(mode="best")  # fast | best
 model.train("data.csv", target="price")
 
-preds = model.predict([[3000, 3, 2, 5]])
+print(model.score())
+print(model.feature_importance())
 ```
 
 ---
 
 ## ⚡ Model Modes
 
-
-
-ezml provides two performance modes to balance speed and accuracy.
-
-#### 🚀 fast (default)
-
-Model: RandomForest
-
-Best for: small to medium datasets, quick and stable baseline
-
-Why use it: fast training, very robust, beginner-safe
-
-#### 🔥 best
-
-Model: LightGBM
-
-Best for: larger datasets and higher accuracy needs
-
-Why use it: more powerful learning, better performance on complex tabular data
-
-💡 ezml automatically falls back to RandomForest if LightGBM is not installed.
-
-> ezml automatically falls back to RandomForest if LightGBM is not installed.
+pyezml provides two performance modes to balance speed and accuracy.
 
 ---
 
-## 🧠 Supported Tasks
+**🚀 fast (default)**
 
-ezml automatically detects:
+* **Model:** RandomForest
+* **Best for:** small to medium datasets
+* **Why use it:** fast, robust, beginner-safe
 
-* ✅ Regression problems
-* ✅ Binary classification
-* ✅ Multi-class classification
+---
 
-Manual override is also supported:
+**🔥 best**
+
+* **Model:** LightGBM
+* **Best for:** larger datasets and higher accuracy
+* **Why use it:** more powerful learning on complex tabular data
+
+> 💡 Automatically falls back to RandomForest if LightGBM is unavailable or dataset is very small.
+
+---
+
+## 📊 Metrics API
+
+After training:
+
+### Classification
+
+* Accuracy
+* F1-score
+
+### Regression
+
+* R² score
+* MAE
+
+Example:
 
 ```python
-AutoModel(task="classification")
-AutoModel(task="regression")
+print(model.metrics_)
+print(model.score())  # primary metric
 ```
 
 ---
 
 ## 🔮 Flexible Prediction Inputs
 
-ezml accepts multiple input formats:
-
 ### Dict (recommended)
 
 ```python
-model.predict({
-    "feature1": value1,
-    "feature2": value2
-})
+model.predict({"feature1": value1, "feature2": value2})
 ```
 
 ### List
@@ -155,15 +156,15 @@ model.save("model.pkl")
 ```python
 from ezml import AutoModel
 
-loaded_model = AutoModel.load("model.pkl")
-preds = loaded_model.predict({...})
+loaded = AutoModel.load("model.pkl")
+print(loaded.predict({...}))
 ```
 
 ---
 
 ## 🧹 Automatic Preprocessing
 
-ezml automatically handles:
+pyezml automatically handles:
 
 * Missing value imputation
 * Categorical encoding
@@ -176,7 +177,7 @@ No manual preprocessing required.
 
 ## 🎯 Project Goal
 
-ezml aims to make machine learning:
+pyezml aims to make machine learning:
 
 * simple
 * fast
@@ -200,13 +201,17 @@ If you find a bug or have an idea:
 
 ---
 
+## 📜 License
 
+MIT License — free to use and modify.
+
+---
 
 ## ⭐ Support
 
-If you find ezml useful, consider giving the repo a star ⭐
-
+If you find pyezml useful, consider giving the repository a star ⭐
 It helps the project grow!
 
 ```
-
+::contentReference[oaicite:0]{index=0}
+```
