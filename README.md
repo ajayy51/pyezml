@@ -1,4 +1,4 @@
-````markdown
+
 # pyezml 🚀  
 **Beginner-Friendly AutoML for Tabular Data**
 
@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/github/license/ajayy51/pyezml)
 ![Downloads](https://img.shields.io/pypi/dm/pyezml)
 
-pyezml is a lightweight AutoML library that lets you train powerful machine learning models in just a few lines of code — no deep ML knowledge required.
+pyezml is a lightweight AutoML library that lets you train machine learning models in **one line of code** — no ML expertise required.
 
 Built for students, developers, analysts, and beginners who want fast, reliable predictions without complex pipelines.
 
@@ -40,7 +40,7 @@ pip install lightgbm
 
 **Requirements**
 
-* Python >= 3.8
+- Python ≥ 3.8
 
 ---
 
