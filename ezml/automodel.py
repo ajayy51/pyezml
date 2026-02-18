@@ -6,6 +6,7 @@ from .detection import detect_task
 from .models import get_model
 from .preprocessing import Preprocessor
 from .persistence import save_object, load_object
+from .helpers import _normalize_save_path
 
 from sklearn.metrics import (
     accuracy_score,
@@ -31,6 +32,7 @@ class AutoModel:
         scale=False,
         verbose=True,
         random_state=42,
+        save=None
         
     ):
         self.task = task
@@ -39,6 +41,8 @@ class AutoModel:
         self.scale = scale
         self.verbose = verbose
         self.random_state = random_state
+        self.auto_save_path = _normalize_save_path(save)
+        
 
         self.model = None
         self.columns = None
@@ -47,7 +51,7 @@ class AutoModel:
         self.metrics_ = None
 
     # ================= TRAIN =================
-    def train(self, data, target):
+    def train(self, data, target, save=None):
         # ---------------- LOAD DATA ----------------
         import pandas as pd
         import os
@@ -168,6 +172,13 @@ class AutoModel:
 
         self.trained = True
 
+        # ---------------- AUTO SAVE ----------------
+        if self.auto_save_path is not None:
+            try:
+                self.save(self.auto_save_path, verbose=self.verbose)
+            except Exception as e:
+                print(f"Auto-save failed: {e}")
+
 # ---------------- VERBOSE LOG ----------------
 
         if self.verbose:
@@ -179,6 +190,54 @@ class AutoModel:
             name = "Accuracy" if self.task == "classification" else "R2"
 
             print(f"Model trained | {name}: {primary_metric:.4f}")
+        
+    def _prepare_input(self, data):
+        """
+        Internal helper to preprocess inference data.
+        Supports dict, list, and pandas DataFrame.
+        """
+        import pandas as pd
+
+        # ---------- dict ----------
+        if isinstance(data, dict):
+            X = pd.DataFrame([data])
+
+        # ---------- list ----------
+        elif isinstance(data, list):
+            if len(data) == 0:
+                raise ValueError("Input data list is empty.")
+
+            # list of dicts
+            if isinstance(data[0], dict):
+                X = pd.DataFrame(data)
+            else:
+                # assume list of lists
+                X = pd.DataFrame(data, columns=self.columns)
+
+        # ---------- DataFrame ----------
+        elif hasattr(data, "columns") and hasattr(data, "iloc"):
+            # more robust than isinstance check
+            X = data.copy()
+
+        else:
+            raise ValueError(
+                f"Unsupported input type for prediction: {type(data)}"
+            )
+
+        # ---------- Column alignment ----------
+        if self.columns is not None:
+            missing_cols = set(self.columns) - set(X.columns)
+            for col in missing_cols:
+                X[col] = 0
+
+            X = X[self.columns]
+
+        # ---------- Apply preprocessing ----------
+        if self.use_preprocess and self.preprocessor is not None:
+            X = self.preprocessor.transform(X)
+
+        return X
+    
 
     # ================= PREDICT =================
     def predict(self, new_data):
@@ -186,60 +245,19 @@ class AutoModel:
         Predict on new data.
 
         Supported input formats:
-        - list: [v1, v2, v3]
-        - list of lists: [[...], [...]]
-        - dict: {"col": value}
-        - list of dicts: [{"col": value}, ...]
+        - pandas DataFrame
+        - dict
+        - list of dicts
+        - list / list of lists
         """
-
-        import pandas as pd
 
         if not self.trained:
             raise RuntimeError("Model is not trained yet. Call train() first.")
 
-    # ---------------- NORMALIZE INPUT ----------------
+        # 🔥 unified preprocessing pipeline
+        X = self._prepare_input(new_data)
 
-    # Case 1: single dict
-        if isinstance(new_data, dict):
-            df = pd.DataFrame([new_data])
-
-    # Case 2: list of dicts
-        elif isinstance(new_data, list) and len(new_data) > 0 and isinstance(new_data[0], dict):
-            df = pd.DataFrame(new_data)
-
-    # Case 3: list or list of lists (old behavior)
-        else:
-            if not isinstance(new_data, list):
-                raise ValueError("Unsupported input type for prediction.")
-
-        # single row like [1,2,3]
-            if len(new_data) > 0 and not isinstance(new_data[0], (list, tuple)):
-                new_data = [new_data]
-
-            if len(new_data[0]) != len(self.columns):
-                raise ValueError(
-                    f"Expected {len(self.columns)} features, got {len(new_data[0])}"
-                )
-
-            df = pd.DataFrame(new_data, columns=self.columns)
-
-    # ---------------- COLUMN ALIGNMENT ----------------
-
-        missing_cols = set(self.columns) - set(df.columns)
-        if missing_cols:
-            raise ValueError(f"Missing columns for prediction: {missing_cols}")
-
-    # ensure correct order
-        df = df[self.columns]
-
-    # ---------------- PREPROCESS ----------------
-
-        if self.use_preprocess and self.preprocessor is not None:
-            df = self.preprocessor.transform(df)
-
-        return self.model.predict(df)
-        
-
+        return self.model.predict(X)
 
     def feature_importance(self):
         """
@@ -286,28 +304,35 @@ class AutoModel:
 
 
     # ================= SAVE =================
-    def save(self, path):
-        """Save full AutoModel pipeline."""
+    def save(self, path, verbose=True):
+        """
+        Save trained AutoModel to disk.
+        """
+
         if not self.trained:
-            raise RuntimeError("Train the model before saving.")
+            raise RuntimeError("Cannot save before training.")
+
+        # 🔥 normalize here (CRITICAL FIX)
+        from .helpers import _normalize_save_path
+        path = _normalize_save_path(path)
 
         package = {
-            "version": self.VERSION,
-            "task": self.task,
+            "model": self.model,
+            "preprocessor": self.preprocessor,
             "columns": self.columns,
+            "task": self.task,
             "use_preprocess": self.use_preprocess,
             "scale": self.scale,
             "random_state": self.random_state,
-            "model": self.model,
-            "preprocessor": self.preprocessor,
             "trained": self.trained,
+            "version": getattr(self, "__version__", "0.1.0"),
         }
 
+        from .persistence import save_object
         save_object(package, path)
 
-        if self.verbose:
-            print(f"Model saved to {path}")
-
+        if verbose:
+            print(f"Model saved as {path}")
     # ================= LOAD =================
     @classmethod
     def load(cls, path, verbose=True):
@@ -334,3 +359,42 @@ class AutoModel:
             print(f"Loaded {model_name} "f"({obj.task}) | Features: {feature_count}")
 
         return obj
+    
+    def predict_proba(self, data):
+        """
+        Predict class probabilities (classification only).
+
+        Returns
+        -------
+        List[Dict[class_label, probability]]
+        """
+
+        if not self.trained:
+            raise RuntimeError("Model is not trained yet.")
+
+        if self.task != "classification":
+            raise RuntimeError(
+                "predict_proba is only available for classification tasks."
+            )
+
+        if not hasattr(self.model, "predict_proba"):
+            raise RuntimeError(
+                "Underlying model does not support probability prediction."
+            )
+
+        # 🔄 Use SAME preprocessing pipeline as predict()
+        X = self._prepare_input(data)
+
+        probs = self.model.predict_proba(X)
+        classes = self.model.classes_
+
+        # 🏷️ Convert to labeled probabilities
+        labeled_probs = []
+        for row in probs:
+            labeled_row = {
+                cls: float(prob)
+                for cls, prob in zip(classes, row)
+            }
+            labeled_probs.append(labeled_row)
+
+        return labeled_probs

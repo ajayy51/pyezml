@@ -6,23 +6,24 @@
 ![Python](https://img.shields.io/pypi/pyversions/pyezml)
 ![License](https://img.shields.io/github/license/ajayy51/pyezml)
 ![Downloads](https://img.shields.io/pypi/dm/pyezml)
+![GitHub stars](https://img.shields.io/github/stars/ajayy51/pyezml?style=social)
 
-pyezml is a lightweight AutoML library that lets you train machine learning models in **one line of code** — no ML expertise required.
+Train machine learning models in **one line of code** — no ML expertise required.
+
+pyezml is a lightweight yet powerful AutoML library that automatically handles preprocessing, model selection, and prediction so you can focus on results.
 
 Built for students, developers, analysts, and beginners who want fast, reliable predictions without complex pipelines.
 
 ---
 
-## ✨ Key Features
+## 🚀 What's New in v0.2.0
 
-- 🧠 Smart task detection (classification vs regression)  
-- ⚡ Fast vs Best model modes  
-- 🧹 Automatic preprocessing (missing values + encoding)  
-- 📊 Built-in metrics API  
-- 🔮 Safe dict-based prediction  
-- 💾 Built-in save & load  
-- 🐼 Supports CSV and pandas DataFrame  
-- 🪶 Lightweight and beginner-friendly  
+-  **Labeled probability predictions**
+-  **Auto-save via `save=` parameter**
+-  **Automatic `.pkl` extension handling**
+-  **Robust DataFrame prediction support**
+-  **Built-in sample data generators**
+-  **Unified prediction pipeline**
 
 ---
 
@@ -40,7 +41,7 @@ pip install lightgbm
 
 **Requirements**
 
-- Python ≥ 3.8
+* Python ≥ 3.8
 
 ---
 
@@ -50,10 +51,72 @@ pip install lightgbm
 from ezml import train_model
 
 model = train_model("data.csv", target="price")
-print(model.predict({"area_sqft": 3000, "bedrooms": 3}))
+print(model.score())
+
 ```
 
-That’s it — model trained and ready.
+That’s it — model trained and evaluated.
+
+---
+
+## 🧪 Generate Sample Data (NEW)
+
+No dataset? No problem.
+
+```python
+from ezml.datasets import make_classification_data
+from ezml import train_model
+
+df = make_classification_data()
+
+model = train_model(df, target="target")
+print(model.score())
+```
+
+Perfect for quick testing and demos.
+
+---
+
+## 🔮 Labeled Probability Predictions (NEW)
+
+pyezml returns **human-readable probabilities**:
+
+```python
+probs = model.predict_proba({
+    "feature_0": 0.5,
+    "feature_1": -1.2
+})
+
+print(probs)
+```
+
+Example output:
+
+```python
+[{'No': 0.12, 'Yes': 0.88}]
+```
+
+No index guessing required.
+
+---
+
+## 💾 Auto-Save Models (NEW)
+
+Save automatically during training:
+
+```python
+model = train_model(
+    df,
+    target="target",
+    save="my_model"  # .pkl added automatically
+)
+```
+
+Manual save still works:
+
+```python
+model.save("model.pkl")
+```
 
 ---
 
@@ -73,25 +136,21 @@ print(model.feature_importance())
 
 ## ⚡ Model Modes
 
-pyezml provides two performance modes to balance speed and accuracy.
+pyezml provides two performance modes:
 
----
-
-**🚀 fast (default)**
+### 🚀 fast (default)
 
 * **Model:** RandomForest
 * **Best for:** small to medium datasets
 * **Why use it:** fast, robust, beginner-safe
 
----
-
-**🔥 best**
+### 🔥 best
 
 * **Model:** LightGBM
 * **Best for:** larger datasets and higher accuracy
-* **Why use it:** more powerful learning on complex tabular data
+* **Why use it:** stronger learning on complex tabular data
 
-> 💡 Automatically falls back to RandomForest if LightGBM is unavailable or dataset is very small.
+> 💡 Automatically falls back to RandomForest if LightGBM is unavailable.
 
 ---
 
@@ -126,12 +185,6 @@ print(model.score())  # primary metric
 model.predict({"feature1": value1, "feature2": value2})
 ```
 
-### List
-
-```python
-model.predict([[v1, v2, v3]])
-```
-
 ### Batch dict
 
 ```python
@@ -141,23 +194,10 @@ model.predict([
 ])
 ```
 
----
-
-## 💾 Save and Load Models
-
-### Save
+### pandas DataFrame
 
 ```python
-model.save("model.pkl")
-```
-
-### Load
-
-```python
-from ezml import AutoModel
-
-loaded = AutoModel.load("model.pkl")
-print(loaded.predict({...}))
+model.predict(df)
 ```
 
 ---
@@ -175,6 +215,14 @@ No manual preprocessing required.
 
 ---
 
+## 📓 Demo Notebook
+
+See the full working example:
+
+👉 examples/pyezml_demo.ipynb
+
+---
+
 ## 🎯 Project Goal
 
 pyezml aims to make machine learning:
@@ -187,7 +235,6 @@ pyezml aims to make machine learning:
 without sacrificing real-world usability.
 
 ---
-
 
 ## 🤝 Contributing
 
@@ -212,6 +259,4 @@ MIT License — free to use and modify.
 If you find pyezml useful, consider giving the repository a star ⭐
 It helps the project grow!
 
-```
-::contentReference[oaicite:0]{index=0}
-```
+
