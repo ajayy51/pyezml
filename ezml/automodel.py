@@ -392,7 +392,7 @@ class AutoModel:
         labeled_probs = []
         for row in probs:
             labeled_row = {
-                cls: float(prob)
+                (cls.item() if hasattr(cls, "item") else cls): float(prob)
                 for cls, prob in zip(classes, row)
             }
             labeled_probs.append(labeled_row)
