@@ -77,6 +77,27 @@ Perfect for quick testing and demos.
 
 ---
 
+
+## 🧬 Ultimate Synthetic Data Generation
+
+Generate advanced datasets with probabilistic distributions and mathematical feature engineering:
+
+```python
+from ezml.datasets import make_mathematical_synthetic_data, list_supported_distributions
+
+print(list_supported_distributions())
+
+df = make_mathematical_synthetic_data(
+    n_samples=2000,
+    task="classification",
+    target_name="label"
+)
+
+print(df.head())
+```
+
+You can also build custom schemas with normal, uniform, gamma, beta, poisson, binomial, triangular and more.
+
 ## 🔮 Labeled Probability Predictions (NEW)
 
 pyezml returns **human-readable probabilities**:
