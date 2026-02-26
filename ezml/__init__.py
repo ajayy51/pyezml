@@ -8,6 +8,7 @@ from .datasets import (
     make_regression_data,
 )
 from .helpers import train_model
+from .pipeline import PipelineNode, PipelineSequence, Load, Train, Predict, Evaluate
 
 __all__ = [
     "AutoModel",
@@ -18,5 +19,11 @@ __all__ = [
     "make_distribution_data",
     "make_mathematical_synthetic_data",
     "list_supported_distributions",
+    "PipelineNode",
+    "PipelineSequence",
+    "Load",
+    "Train",
+    "Predict",
+    "Evaluate",
 ]
 __version__ = "0.2.3"

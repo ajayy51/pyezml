@@ -1,5 +1,6 @@
 
 # pyezml 🚀  
+
 **Beginner-Friendly AutoML for Tabular Data**
 
 ![PyPI version](https://img.shields.io/pypi/v/pyezml)
@@ -28,11 +29,9 @@ pyezml now includes a powerful **Synthetic Dataset Generator** to help you quick
 - 🧮 Automatically create polynomial, trig, and interaction features  
 - 🎯 Build synthetic targets for regression and classification  
 - 🔁 Reproduce datasets with fixed random seeds  
-- ⚡ Create rich ML-ready datasets in one line 
-
+- ⚡ Create rich ML-ready datasets in one line
 
 ### 🔥 Quick Example
-
 
 ```bash
 from ezml import make_mathematical_synthetic_data
@@ -40,6 +39,7 @@ from ezml import make_mathematical_synthetic_data
 df = make_mathematical_synthetic_data(n_samples=1000)
 
 ````
+
 ---
 
 ## 🚀 Installation
@@ -56,7 +56,7 @@ pip install lightgbm
 
 **Requirements**
 
-* Python ≥ 3.8
+- Python ≥ 3.8
 
 ---
 
@@ -71,6 +71,29 @@ print(model.score())
 ```
 
 That’s it — model trained and evaluated.
+
+---
+
+## 🔗 Pipeline Syntax (NEW)
+
+You can now use a clean, intuitive pipeline sequence using the `|` operator! This makes reading and chained operations elegant and fast.
+
+```python
+from ezml import Load, Train, Predict
+
+# 1. Train a model in one flow
+model = "data.csv" | Load() | Train(target="price", mode="fast")
+
+# 2. Make predictions
+predictions = new_data_dict | Predict(model)
+```
+
+You can even pre-compose pipelines before pushing data through:
+
+```python
+pipeline = Load() | Train(target="target")
+model = "my_dataset.csv" | pipeline
+```
 
 ---
 
@@ -91,7 +114,6 @@ print(model.score())
 Perfect for quick testing and demos.
 
 ---
-
 
 ## 🧬 Ultimate Synthetic Data Generation
 
@@ -176,15 +198,15 @@ pyezml provides two performance modes:
 
 ### 🚀 fast (default)
 
-* **Model:** RandomForest
-* **Best for:** small to medium datasets
-* **Why use it:** fast, robust, beginner-safe
+- **Model:** RandomForest
+- **Best for:** small to medium datasets
+- **Why use it:** fast, robust, beginner-safe
 
 ### 🔥 best
 
-* **Model:** LightGBM
-* **Best for:** larger datasets and higher accuracy
-* **Why use it:** stronger learning on complex tabular data
+- **Model:** LightGBM
+- **Best for:** larger datasets and higher accuracy
+- **Why use it:** stronger learning on complex tabular data
 
 > 💡 Automatically falls back to RandomForest if LightGBM is unavailable.
 
@@ -196,13 +218,13 @@ After training:
 
 ### Classification
 
-* Accuracy
-* F1-score
+- Accuracy
+- F1-score
 
 ### Regression
 
-* R² score
-* MAE
+- R² score
+- MAE
 
 Example:
 
@@ -242,10 +264,10 @@ model.predict(df)
 
 pyezml automatically handles:
 
-* Missing value imputation
-* Categorical encoding
-* Optional feature scaling
-* Column alignment during prediction
+- Missing value imputation
+- Categorical encoding
+- Optional feature scaling
+- Column alignment during prediction
 
 No manual preprocessing required.
 
@@ -263,10 +285,10 @@ See the full working example:
 
 pyezml aims to make machine learning:
 
-* simple
-* fast
-* accessible
-* beginner-friendly
+- simple
+- fast
+- accessible
+- beginner-friendly
 
 without sacrificing real-world usability.
 
@@ -294,5 +316,3 @@ MIT License — free to use and modify.
 
 If you find pyezml useful, consider giving the repository a star ⭐
 It helps the project grow!
-
-

@@ -10,4 +10,4 @@ dist/
 build/
 .pypirc
 test.py
-
+tests/
